@@ -17,6 +17,7 @@ import {
   X,
   UploadCloud,
   FileCheck,
+  Gift,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -31,6 +32,22 @@ interface AbsenceRecord {
   days: number;
   isCurrentUser: boolean;
 }
+
+// Statutory Public Holidays Registry
+const PUBLIC_HOLIDAYS: Record<string, string> = {
+  '2026-01-01': "New Year's Day",
+  '2026-01-26': 'Republic Day 🇮🇳',
+  '2026-03-25': 'Holi Festival 🎨',
+  '2026-04-14': 'Ambedkar Jayanti',
+  '2026-05-01': 'May Day / Labor Day',
+  '2026-08-15': 'Independence Day 🇮🇳',
+  '2026-08-26': 'Janmashtami 🪔',
+  '2026-09-05': 'Ganesh Chaturthi 🌸',
+  '2026-10-02': 'Gandhi Jayanti 🇮🇳',
+  '2026-10-20': 'Dussehra (Vijayadashami) ✨',
+  '2026-11-08': 'Diwali (Deepavali) 🪔',
+  '2026-12-25': 'Christmas Day 🎄',
+};
 
 export default function ApplyLeavePage() {
   const router = useRouter();
@@ -227,6 +244,7 @@ export default function ApplyLeavePage() {
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
             const dayOfWeek = currentDayObj.getDay();
             const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const holidayName = PUBLIC_HOLIDAYS[dateStr];
 
             const isToday =
               currentDayObj.getDate() === new Date().getDate() &&
@@ -266,6 +284,8 @@ export default function ApplyLeavePage() {
               dayClasses += 'bg-emerald-600/30 border-emerald-500/50 text-emerald-200 font-bold ';
             } else if (pendingLeave) {
               dayClasses += 'bg-amber-600/30 border-amber-500/50 text-amber-200 font-bold ';
+            } else if (holidayName) {
+              dayClasses += 'bg-rose-950/80 border-rose-500/70 text-rose-300 font-extrabold shadow-sm shadow-rose-500/20 ';
             } else if (isWeekend) {
               dayClasses += 'bg-slate-900/60 border-slate-800 text-slate-500 ';
             } else {
@@ -280,9 +300,18 @@ export default function ApplyLeavePage() {
               <div
                 key={dateStr}
                 onClick={() => handleDateClick(dateStr)}
+                title={holidayName ? `Public Holiday: ${holidayName}` : undefined}
                 className={dayClasses}
               >
                 <span>{dayNum}</span>
+
+                {/* Holiday Badge Indicator */}
+                {holidayName && !isStart && !isEnd && (
+                  <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                  </span>
+                )}
+
                 {isStart && !isEnd && (
                   <span className="absolute -top-1 -right-1 flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
@@ -463,7 +492,7 @@ export default function ApplyLeavePage() {
             </div>
 
             {/* Legend (matching screenshot layout) */}
-            <div className="pt-4 border-t border-slate-800/80">
+            <div className="pt-4 border-t border-slate-800/80 space-y-4">
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-[11px] text-slate-300">
                 <div className="flex items-center space-x-2">
                   <span className="w-3.5 h-3.5 rounded border-2 border-purple-500 bg-slate-900 inline-block" />
@@ -482,8 +511,40 @@ export default function ApplyLeavePage() {
                   <span>Pending Leave</span>
                 </div>
                 <div className="flex items-center space-x-2">
+                  <span className="w-3.5 h-3.5 rounded bg-rose-950/80 border border-rose-500 inline-block" />
+                  <span>Public Holiday</span>
+                </div>
+                <div className="flex items-center space-x-2">
                   <span className="w-3.5 h-3.5 rounded bg-slate-900 border border-slate-800 inline-block" />
-                  <span>Non-Working / Holiday</span>
+                  <span>Non-Working / Weekend</span>
+                </div>
+              </div>
+
+              {/* Public Holidays Listing */}
+              <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 space-y-2">
+                <div className="flex items-center space-x-2 text-xs font-bold text-rose-300">
+                  <Gift className="w-4 h-4 text-rose-400" />
+                  <span>Upcoming Official Public Holidays</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-300">
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span>Aug 15: Independence Day 🇮🇳</span>
+                  </div>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span>Aug 26: Janmashtami 🪔</span>
+                  </div>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span>Sep 05: Ganesh Chaturthi 🌸</span>
+                  </div>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span>Oct 02: Gandhi Jayanti 🇮🇳</span>
+                  </div>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span>Oct 20: Dussehra ✨</span>
+                  </div>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span>Nov 08: Diwali 🪔</span>
+                  </div>
                 </div>
               </div>
             </div>
