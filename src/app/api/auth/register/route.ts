@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await hashPassword(password);
     const userRole = Role.EMPLOYEE; // Public self-registration is strictly EMPLOYEE role
 
-    // Base statutory leave balances for all employees (Unpaid Leave reduced to 16 Days)
+    // Base statutory leave balances for all employees (Unpaid Leave set to 14 Days)
     const initialBalances: Array<{ leaveType: string; allocated: number; used: number }> = [
       { leaveType: LeaveType.CASUAL, allocated: 12, used: 0 },
       { leaveType: LeaveType.SICK, allocated: 10, used: 0 },
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       { leaveType: LeaveType.SPECIAL_MEDICAL, allocated: 30, used: 0 },
       { leaveType: LeaveType.ADOPTION, allocated: 60, used: 0 },
       { leaveType: LeaveType.CHARITABLE, allocated: 5, used: 0 },
-      { leaveType: LeaveType.UNPAID, allocated: 16, used: 0 },
+      { leaveType: LeaveType.UNPAID, allocated: 14, used: 0 },
     ];
 
     // Menstrual leave allocated ONLY for Female employees

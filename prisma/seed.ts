@@ -12,7 +12,7 @@ const MALE_LEAVE_BALANCES = [
   { leaveType: 'SPECIAL_MEDICAL', allocated: 30, used: 0 },
   { leaveType: 'ADOPTION', allocated: 60, used: 0 },
   { leaveType: 'CHARITABLE', allocated: 5, used: 0 },
-  { leaveType: 'UNPAID', allocated: 16, used: 0 },
+  { leaveType: 'UNPAID', allocated: 14, used: 0 },
 ];
 
 const FEMALE_LEAVE_BALANCES = [
@@ -21,7 +21,7 @@ const FEMALE_LEAVE_BALANCES = [
 ];
 
 async function main() {
-  console.log('🌱 Starting database seed with Gender-Based Leave Balances & Unpaid Leave = 16 Days...');
+  console.log('🌱 Starting database seed with Unpaid Leave = 14 Days...');
 
   // Clean existing data
   await prisma.notification.deleteMany();
@@ -100,7 +100,7 @@ async function main() {
           { leaveType: 'SPECIAL_MEDICAL', allocated: 30, used: 0 },
           { leaveType: 'ADOPTION', allocated: 60, used: 0 },
           { leaveType: 'CHARITABLE', allocated: 5, used: 1 },
-          { leaveType: 'UNPAID', allocated: 16, used: 2 },
+          { leaveType: 'UNPAID', allocated: 14, used: 2 },
         ],
       },
     },
@@ -182,7 +182,7 @@ async function main() {
     ],
   });
 
-  console.log('✅ Seed completed successfully! Unpaid Leave set to 16 Days.');
+  console.log('✅ Seed completed successfully! Unpaid Leave set to 14 Days.');
 }
 
 main()
