@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Calendar, Lock, Mail, ArrowRight, Shield, UserCheck, AlertCircle } from 'lucide-react';
+import { Calendar, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 
 export default function LoginPage() {
@@ -42,11 +42,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleQuickLogin = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
   };
 
   return (
@@ -121,68 +116,6 @@ export default function LoginPage() {
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
-
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-800" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-slate-900 px-3 text-slate-400 font-semibold">
-                  Demo Viva Credentials
-                </span>
-              </div>
-            </div>
-
-            {/* Quick Demo Login Cards */}
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin@company.com', 'Admin@123')}
-                className="p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/40 text-left transition-all group"
-              >
-                <div className="flex items-center space-x-1.5 font-bold text-amber-400">
-                  <Shield className="w-3.5 h-3.5" />
-                  <span>Admin</span>
-                </div>
-                <div className="text-[11px] text-slate-400 truncate mt-0.5">admin@company.com</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('john.doe@company.com', 'Employee@123')}
-                className="p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-brand-500/40 text-left transition-all group"
-              >
-                <div className="flex items-center space-x-1.5 font-bold text-brand-400">
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>John Doe</span>
-                </div>
-                <div className="text-[11px] text-slate-400 truncate mt-0.5">Engineering</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('sarah.smith@company.com', 'Employee@123')}
-                className="p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-brand-500/40 text-left transition-all group"
-              >
-                <div className="flex items-center space-x-1.5 font-bold text-brand-400">
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>Sarah Smith</span>
-                </div>
-                <div className="text-[11px] text-slate-400 truncate mt-0.5">UI/UX Design</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('alex.jones@company.com', 'Employee@123')}
-                className="p-2.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-brand-500/40 text-left transition-all group"
-              >
-                <div className="flex items-center space-x-1.5 font-bold text-brand-400">
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>Alex Jones</span>
-                </div>
-                <div className="text-[11px] text-slate-400 truncate mt-0.5">Marketing</div>
-              </button>
-            </div>
 
             <div className="text-center text-xs text-slate-400">
               Don't have an account?{' '}
