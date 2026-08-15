@@ -1,0 +1,38 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js build output
+/.next/
+/out/
+
+# Production build
+/build
+
+# Environment variables
+.env
+.env*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database & temp files
+/prisma/dev.db
+/prisma/dev.db-journal
+*.log
+*.zip
+.DS_Store
+
+# Temporary scratch test files
+/scratch/
+/test-s3.mjs
+/test-cloudwatch.mjs
+/create-sns-ses.mjs
+/create-cloudwatch.mjs
+/create-more-aws.mjs

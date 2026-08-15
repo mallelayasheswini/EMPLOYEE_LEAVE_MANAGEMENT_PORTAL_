@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String         @unique
+  password      String
+  role          String         @default("EMPLOYEE") // "EMPLOYEE" | "ADMIN"
+  department    String
+  managerId     String?        @db.ObjectId
+  manager       User?          @relation("ManagerEmployees", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  directReports User[]         @relation("ManagerEmployees")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  leaveBalances LeaveBalance[]
+  leaveRequests LeaveRequest[]
+  notifications Notification[]
+}
+
+model LeaveBalance {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String @db.ObjectId
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leaveType String // "CASUAL" | "SICK" | "EARNED" | "UNPAID"
+  allocated Int
+  used      Int    @default(0)
+
+  @@unique([userId, leaveType])
+}
+
+model LeaveRequest {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @db.ObjectId
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leaveType      String // "CASUAL" | "SICK" | "EARNED" | "UNPAID"
+  startDate      DateTime
+  endDate        DateTime
+  days           Int
+  reason         String
+  status         String   @default("PENDING") // "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED"
+  managerComment String?
+  attachmentUrl  String? // AWS S3 Cloud Attachment URL
+  s3Key          String? // AWS S3 Storage Key
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO") // "SUCCESS" | "DANGER" | "INFO"
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
