@@ -12,7 +12,7 @@ const MALE_LEAVE_BALANCES = [
   { leaveType: 'SPECIAL_MEDICAL', allocated: 30, used: 0 },
   { leaveType: 'ADOPTION', allocated: 60, used: 0 },
   { leaveType: 'CHARITABLE', allocated: 5, used: 0 },
-  { leaveType: 'UNPAID', allocated: 0, used: 0 },
+  { leaveType: 'UNPAID', allocated: 16, used: 0 },
 ];
 
 const FEMALE_LEAVE_BALANCES = [
@@ -21,7 +21,7 @@ const FEMALE_LEAVE_BALANCES = [
 ];
 
 async function main() {
-  console.log('🌱 Starting database seed with Gender-Based Leave Balances...');
+  console.log('🌱 Starting database seed with Gender-Based Leave Balances & Unpaid Leave = 16 Days...');
 
   // Clean existing data
   await prisma.notification.deleteMany();
@@ -91,7 +91,17 @@ async function main() {
       department: 'Product Marketing',
       managerId: admin.id,
       leaveBalances: {
-        create: MALE_LEAVE_BALANCES,
+        create: [
+          { leaveType: 'CASUAL', allocated: 12, used: 1 },
+          { leaveType: 'SICK', allocated: 10, used: 0 },
+          { leaveType: 'EARNED', allocated: 15, used: 0 },
+          { leaveType: 'PARENTAL', allocated: 90, used: 0 },
+          { leaveType: 'SECONDARY_PARENTAL', allocated: 14, used: 0 },
+          { leaveType: 'SPECIAL_MEDICAL', allocated: 30, used: 0 },
+          { leaveType: 'ADOPTION', allocated: 60, used: 0 },
+          { leaveType: 'CHARITABLE', allocated: 5, used: 1 },
+          { leaveType: 'UNPAID', allocated: 16, used: 2 },
+        ],
       },
     },
   });
@@ -172,7 +182,7 @@ async function main() {
     ],
   });
 
-  console.log('✅ Seed completed successfully! Menstrual Leave allocated specifically for Female employees.');
+  console.log('✅ Seed completed successfully! Unpaid Leave set to 16 Days.');
 }
 
 main()

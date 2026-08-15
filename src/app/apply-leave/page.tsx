@@ -15,6 +15,8 @@ import {
   RotateCcw,
   HelpCircle,
   X,
+  UploadCloud,
+  FileCheck,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -47,6 +49,13 @@ export default function ApplyLeavePage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
+
+  // Proof File Upload State for Parental & Adoption Leaves
+  const [file, setFile] = useState<File | null>(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null);
+  const [s3Key, setS3Key] = useState<string | null>(null);
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -92,6 +101,12 @@ export default function ApplyLeavePage() {
     }
   }, [startDate, endDate]);
 
+  // Check if proof document upload is mandatory for current time type
+  const isProofRequired =
+    timeType === 'Primary Parental Leave' ||
+    timeType === 'Secondary Parental Leave' ||
+    timeType.includes('Adoption');
+
   // Days calculation
   const calculatedDays = startDate && endDate ? calculateLeaveDays(startDate, endDate) : 0;
 
@@ -99,6 +114,46 @@ export default function ApplyLeavePage() {
   const clearDates = () => {
     setStartDate('');
     setEndDate('');
+  };
+
+  // Handle file select and immediate upload to AWS S3
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setError('File size exceeds maximum 5MB limit.');
+      return;
+    }
+
+    setFile(selectedFile);
+    setUploadingFile(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to upload proof document');
+      }
+
+      setAttachmentUrl(data.attachmentUrl);
+      setS3Key(data.s3Key);
+      setToast({ type: 'success', message: 'Proof document uploaded to AWS S3 successfully!' });
+    } catch (err: any) {
+      setError(err.message || 'Error uploading document to AWS S3');
+      setFile(null);
+    } font-medium finally {
+      setUploadingFile(false);
+    }
   };
 
   // Calendar Date click selection logic
@@ -256,6 +311,11 @@ export default function ApplyLeavePage() {
       return;
     }
 
+    if (isProofRequired && !attachmentUrl) {
+      setError('Proof document file upload is mandatory for Parental and Adoption leave requests.');
+      return;
+    }
+
     // Map timeType label to system enum
     let leaveTypeEnum = 'CASUAL';
     if (timeType.includes('Sick')) leaveTypeEnum = 'SICK';
@@ -279,6 +339,8 @@ export default function ApplyLeavePage() {
           startDate,
           endDate,
           reason: `[${timeType}] ${reason}`,
+          attachmentUrl,
+          s3Key,
         }),
       });
 
@@ -458,16 +520,47 @@ export default function ApplyLeavePage() {
                 >
                   <option value="Flexible Vacation - India">Flexible Vacation - India</option>
                   <option value="Sick Leave - India">Sick Leave - India</option>
-                  <option value="Primary Parental Leave">Primary Parental Leave</option>
-                  <option value="Secondary Parental Leave">Secondary Parental Leave</option>
+                  <option value="Primary Parental Leave">Primary Parental Leave (Proof Required)</option>
+                  <option value="Secondary Parental Leave">Secondary Parental Leave (Proof Required)</option>
                   <option value="Special Medical Leave - India">Special Medical Leave - India</option>
                   {isFemale && <option value="Menstrual Leave - India">Menstrual Leave - India (Eligible)</option>}
-                  <option value="Adoption - India">Adoption - India</option>
+                  <option value="Adoption - India">Adoption - India (Proof Required)</option>
                   <option value="Charitable Works">Charitable Works</option>
-                  <option value="Unpaid Leave - India">Unpaid Leave - India</option>
-                  <option value="Personal Unpaid Leave">Personal Unpaid Leave</option>
+                  <option value="Unpaid Leave - India">Unpaid Leave - India (16 Days Max)</option>
+                  <option value="Personal Unpaid Leave">Personal Unpaid Leave (16 Days Max)</option>
                 </select>
               </div>
+
+              {/* Mandatory Proof Attachment Input for Parental & Adoption Leaves */}
+              {isProofRequired && (
+                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 space-y-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-amber-300 flex items-center space-x-1.5">
+                    <UploadCloud className="w-4 h-4 text-amber-400" />
+                    <span>Upload Supporting Proof Document (Required)</span>
+                  </label>
+
+                  <input
+                    type="file"
+                    required={!attachmentUrl}
+                    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                    onChange={handleFileChange}
+                    className="w-full text-xs text-slate-300 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-brand-600 file:text-white hover:file:bg-brand-500 cursor-pointer"
+                  />
+
+                  {uploadingFile && (
+                    <p className="text-[11px] text-amber-300 font-medium animate-pulse">
+                      Uploading proof document to AWS S3...
+                    </p>
+                  )}
+
+                  {attachmentUrl && (
+                    <div className="flex items-center space-x-2 text-xs text-emerald-400 font-semibold pt-1">
+                      <FileCheck className="w-4 h-4 text-emerald-400" />
+                      <span className="truncate">Proof uploaded to AWS S3 ({file?.name})</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Start & End Date Selection Pickers */}
               <div className="grid grid-cols-2 gap-3">
@@ -564,7 +657,7 @@ export default function ApplyLeavePage() {
                 </Link>
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || uploadingFile}
                   className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-700 to-indigo-600 hover:from-blue-600 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50"
                 >
                   {submitting ? 'Submitting...' : 'Submit'}
