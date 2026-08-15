@@ -150,7 +150,7 @@ export default function RegisterPage() {
               {/* Gender Selection */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-                  Gender (Determines Menstrual Leave Eligibility)
+                  Gender
                 </label>
                 <div className="relative">
                   <Heart className="w-4 h-4 text-pink-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -159,9 +159,9 @@ export default function RegisterPage() {
                     onChange={(e) => setGender(e.target.value)}
                     className="w-full glass-input pl-10 pr-4 py-2.5 rounded-xl text-sm appearance-none bg-slate-900 text-slate-100"
                   >
-                    <option value="FEMALE">Female (Eligible for Menstrual & Statutory Leaves)</option>
-                    <option value="MALE">Male (Standard Statutory Leaves)</option>
-                    <option value="OTHER">Other / Non-Binary</option>
+                    <option value="FEMALE">Female</option>
+                    <option value="MALE">Male</option>
+                    <option value="OTHER">Prefer not to say</option>
                   </select>
                 </div>
               </div>

@@ -151,7 +151,7 @@ export default function ApplyLeavePage() {
     } catch (err: any) {
       setError(err.message || 'Error uploading document to AWS S3');
       setFile(null);
-    } font-medium finally {
+    } finally {
       setUploadingFile(false);
     }
   };
@@ -520,14 +520,14 @@ export default function ApplyLeavePage() {
                 >
                   <option value="Flexible Vacation - India">Flexible Vacation - India</option>
                   <option value="Sick Leave - India">Sick Leave - India</option>
-                  <option value="Primary Parental Leave">Primary Parental Leave (Proof Required)</option>
-                  <option value="Secondary Parental Leave">Secondary Parental Leave (Proof Required)</option>
+                  <option value="Primary Parental Leave">Primary Parental Leave</option>
+                  <option value="Secondary Parental Leave">Secondary Parental Leave</option>
                   <option value="Special Medical Leave - India">Special Medical Leave - India</option>
-                  {isFemale && <option value="Menstrual Leave - India">Menstrual Leave - India (Eligible)</option>}
-                  <option value="Adoption - India">Adoption - India (Proof Required)</option>
+                  {isFemale && <option value="Menstrual Leave - India">Menstrual Leave - India</option>}
+                  <option value="Adoption - India">Adoption - India</option>
                   <option value="Charitable Works">Charitable Works</option>
-                  <option value="Unpaid Leave - India">Unpaid Leave - India (16 Days Max)</option>
-                  <option value="Personal Unpaid Leave">Personal Unpaid Leave (16 Days Max)</option>
+                  <option value="Unpaid Leave - India">Unpaid Leave - India</option>
+                  <option value="Personal Unpaid Leave">Personal Unpaid Leave</option>
                 </select>
               </div>
 
