@@ -188,9 +188,8 @@ export default function EmployeeDashboard() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {visibleBalances.map((b) => {
-              const isUnpaid = b.leaveType === 'UNPAID';
-              const remaining = isUnpaid ? 'N/A' : b.allocated - b.used;
-              const percentUsed = isUnpaid ? 0 : Math.min(100, Math.round((b.used / b.allocated) * 100));
+              const remaining = b.allocated - b.used;
+              const percentUsed = Math.min(100, Math.round((b.used / (b.allocated || 1)) * 100));
 
               return (
                 <div key={b.id} className="glass-card p-5 rounded-2xl space-y-4">
@@ -199,7 +198,7 @@ export default function EmployeeDashboard() {
                       {formatLeaveType(b.leaveType)}
                     </span>
                     <span className="text-xs px-2 py-0.5 rounded-md bg-slate-800 text-brand-400 font-semibold border border-slate-700">
-                      {isUnpaid ? 'Unlimited' : `${remaining} Available`}
+                      {remaining} Available
                     </span>
                   </div>
 
@@ -207,24 +206,22 @@ export default function EmployeeDashboard() {
                     <div className="flex items-baseline justify-between mb-1">
                       <span className="text-3xl font-extrabold text-white">{b.used}</span>
                       <span className="text-xs text-slate-400 font-medium">
-                        {isUnpaid ? 'Days Taken' : `/ ${b.allocated} Allocated`}
+                        / {b.allocated} Allocated
                       </span>
                     </div>
 
-                    {!isUnpaid && (
-                      <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden mt-2">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            percentUsed > 80
-                              ? 'bg-rose-500'
-                              : percentUsed > 50
-                              ? 'bg-amber-500'
-                              : 'bg-gradient-to-r from-brand-500 to-indigo-500'
-                          }`}
-                          style={{ width: `${percentUsed}%` }}
-                        />
-                      </div>
-                    )}
+                    <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden mt-2">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          percentUsed > 80
+                            ? 'bg-rose-500'
+                            : percentUsed > 50
+                            ? 'bg-amber-500'
+                            : 'bg-gradient-to-r from-brand-500 to-indigo-500'
+                        }`}
+                        style={{ width: `${percentUsed}%` }}
+                      />
+                    </div>
                   </div>
                 </div>
               );
