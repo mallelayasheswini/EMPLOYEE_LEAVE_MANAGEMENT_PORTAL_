@@ -111,6 +111,14 @@ export default function EmployeeDashboard() {
     (l) => l.status === 'APPROVED' && new Date(l.startDate) >= today
   );
 
+  // Filter balances: Show MENSTRUAL leave ONLY for Female employees
+  const visibleBalances = balances.filter((b) => {
+    if (b.leaveType === 'MENSTRUAL') {
+      return user?.gender === 'FEMALE';
+    }
+    return true;
+  });
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
       <Navbar user={user} />
@@ -179,7 +187,7 @@ export default function EmployeeDashboard() {
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {balances.map((b) => {
+            {visibleBalances.map((b) => {
               const isUnpaid = b.leaveType === 'UNPAID';
               const remaining = isUnpaid ? 'N/A' : b.allocated - b.used;
               const percentUsed = isUnpaid ? 0 : Math.min(100, Math.round((b.used / b.allocated) * 100));

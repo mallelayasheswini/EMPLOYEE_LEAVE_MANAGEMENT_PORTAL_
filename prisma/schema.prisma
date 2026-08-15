@@ -14,6 +14,7 @@ model User {
   password      String
   role          String         @default("EMPLOYEE") // "EMPLOYEE" | "ADMIN"
   department    String
+  gender        String?        @default("FEMALE") // "FEMALE" | "MALE" | "OTHER"
   managerId     String?        @db.ObjectId
   manager       User?          @relation("ManagerEmployees", fields: [managerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   directReports User[]         @relation("ManagerEmployees")
@@ -28,7 +29,7 @@ model LeaveBalance {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   userId    String @db.ObjectId
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  leaveType String // "CASUAL" | "SICK" | "EARNED" | "UNPAID"
+  leaveType String
   allocated Int
   used      Int    @default(0)
 
@@ -39,7 +40,7 @@ model LeaveRequest {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   userId         String   @db.ObjectId
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  leaveType      String // "CASUAL" | "SICK" | "EARNED" | "UNPAID"
+  leaveType      String
   startDate      DateTime
   endDate        DateTime
   days           Int

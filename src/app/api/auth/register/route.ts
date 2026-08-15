@@ -5,7 +5,7 @@ import { LeaveType, Role } from '@/lib/types';
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, password, department, managerId } = await req.json();
+    const { name, email, password, department, gender, managerId } = await req.json();
 
     if (!name || !email || !password || !department) {
       return NextResponse.json(
@@ -13,6 +13,8 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    const userGender = (gender || 'FEMALE').toUpperCase();
 
     const existingUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },
@@ -28,27 +30,35 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await hashPassword(password);
     const userRole = Role.EMPLOYEE; // Public self-registration is strictly EMPLOYEE role
 
+    // Base statutory leave balances for all employees
+    const initialBalances: Array<{ leaveType: string; allocated: number; used: number }> = [
+      { leaveType: LeaveType.CASUAL, allocated: 12, used: 0 },
+      { leaveType: LeaveType.SICK, allocated: 10, used: 0 },
+      { leaveType: LeaveType.EARNED, allocated: 15, used: 0 },
+      { leaveType: LeaveType.PARENTAL, allocated: 90, used: 0 },
+      { leaveType: LeaveType.SECONDARY_PARENTAL, allocated: 14, used: 0 },
+      { leaveType: LeaveType.SPECIAL_MEDICAL, allocated: 30, used: 0 },
+      { leaveType: LeaveType.ADOPTION, allocated: 60, used: 0 },
+      { leaveType: LeaveType.CHARITABLE, allocated: 5, used: 0 },
+      { leaveType: LeaveType.UNPAID, allocated: 0, used: 0 },
+    ];
+
+    // Menstrual leave allocated ONLY for Female employees
+    if (userGender === 'FEMALE') {
+      initialBalances.push({ leaveType: LeaveType.MENSTRUAL, allocated: 12, used: 0 });
+    }
+
     const user = await prisma.user.create({
       data: {
         name,
         email: email.toLowerCase().trim(),
         password: hashedPassword,
         department,
+        gender: userGender,
         managerId: managerId || null,
         role: userRole,
         leaveBalances: {
-          create: [
-            { leaveType: LeaveType.CASUAL, allocated: 12, used: 0 },
-            { leaveType: LeaveType.SICK, allocated: 10, used: 0 },
-            { leaveType: LeaveType.EARNED, allocated: 15, used: 0 },
-            { leaveType: LeaveType.PARENTAL, allocated: 90, used: 0 },
-            { leaveType: LeaveType.SECONDARY_PARENTAL, allocated: 14, used: 0 },
-            { leaveType: LeaveType.SPECIAL_MEDICAL, allocated: 30, used: 0 },
-            { leaveType: LeaveType.MENSTRUAL, allocated: 12, used: 0 },
-            { leaveType: LeaveType.ADOPTION, allocated: 60, used: 0 },
-            { leaveType: LeaveType.CHARITABLE, allocated: 5, used: 0 },
-            { leaveType: LeaveType.UNPAID, allocated: 0, used: 0 },
-          ],
+          create: initialBalances,
         },
       },
     });
@@ -58,6 +68,7 @@ export async function POST(req: NextRequest) {
       email: user.email,
       name: user.name,
       department: user.department,
+      gender: userGender,
       role: userRole as Role,
     };
 

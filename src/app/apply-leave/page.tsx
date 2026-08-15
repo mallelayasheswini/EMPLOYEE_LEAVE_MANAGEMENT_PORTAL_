@@ -314,6 +314,8 @@ export default function ApplyLeavePage() {
     );
   }
 
+  const isFemale = user?.gender === 'FEMALE';
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
       <Navbar user={user} />
@@ -442,7 +444,7 @@ export default function ApplyLeavePage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Time Type Dropdown (Matching exact picture options) */}
+              {/* Time Type Dropdown */}
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center space-x-1">
                   <span>Time Type</span>
@@ -459,7 +461,7 @@ export default function ApplyLeavePage() {
                   <option value="Primary Parental Leave">Primary Parental Leave</option>
                   <option value="Secondary Parental Leave">Secondary Parental Leave</option>
                   <option value="Special Medical Leave - India">Special Medical Leave - India</option>
-                  <option value="Menstrual Leave - India">Menstrual Leave - India</option>
+                  {isFemale && <option value="Menstrual Leave - India">Menstrual Leave - India (Eligible)</option>}
                   <option value="Adoption - India">Adoption - India</option>
                   <option value="Charitable Works">Charitable Works</option>
                   <option value="Unpaid Leave - India">Unpaid Leave - India</option>

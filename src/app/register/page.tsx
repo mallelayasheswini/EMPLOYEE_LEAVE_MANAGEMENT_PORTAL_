@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Calendar, Lock, Mail, User, Building, ShieldCheck, ArrowRight, AlertCircle, UserCheck } from 'lucide-react';
+import { Calendar, Lock, Mail, User, Building, ShieldCheck, ArrowRight, AlertCircle, UserCheck, Heart } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 
 interface ManagerOption {
@@ -19,6 +19,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [department, setDepartment] = useState('Software Engineering');
+  const [gender, setGender] = useState('FEMALE');
   const [managerId, setManagerId] = useState('');
   const [managers, setManagers] = useState<ManagerOption[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,7 +48,7 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, department, managerId }),
+        body: JSON.stringify({ name, email, password, department, gender, managerId }),
       });
 
       const data = await res.json();
@@ -146,6 +147,25 @@ export default function RegisterPage() {
                 </div>
               </div>
 
+              {/* Gender Selection */}
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Gender (Determines Menstrual Leave Eligibility)
+                </label>
+                <div className="relative">
+                  <Heart className="w-4 h-4 text-pink-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <select
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                    className="w-full glass-input pl-10 pr-4 py-2.5 rounded-xl text-sm appearance-none bg-slate-900 text-slate-100"
+                  >
+                    <option value="FEMALE">Female (Eligible for Menstrual & Statutory Leaves)</option>
+                    <option value="MALE">Male (Standard Statutory Leaves)</option>
+                    <option value="OTHER">Other / Non-Binary</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
                   Department
@@ -209,7 +229,7 @@ export default function RegisterPage() {
 
             <div className="text-center text-xs text-slate-400">
               Already have an account?{' '}
-              <Link href="/login" className="text-brand-400 font-semibold hover:underline">
+              <Link href="/register" className="text-brand-400 font-semibold hover:underline">
                 Sign in here
               </Link>
             </div>

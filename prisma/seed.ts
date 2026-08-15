@@ -3,21 +3,25 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-const DEFAULT_LEAVE_BALANCES = [
+const MALE_LEAVE_BALANCES = [
   { leaveType: 'CASUAL', allocated: 12, used: 1 },
   { leaveType: 'SICK', allocated: 10, used: 0 },
   { leaveType: 'EARNED', allocated: 15, used: 2 },
   { leaveType: 'PARENTAL', allocated: 90, used: 0 },
   { leaveType: 'SECONDARY_PARENTAL', allocated: 14, used: 0 },
   { leaveType: 'SPECIAL_MEDICAL', allocated: 30, used: 0 },
-  { leaveType: 'MENSTRUAL', allocated: 12, used: 0 },
   { leaveType: 'ADOPTION', allocated: 60, used: 0 },
   { leaveType: 'CHARITABLE', allocated: 5, used: 0 },
   { leaveType: 'UNPAID', allocated: 0, used: 0 },
 ];
 
+const FEMALE_LEAVE_BALANCES = [
+  ...MALE_LEAVE_BALANCES,
+  { leaveType: 'MENSTRUAL', allocated: 12, used: 0 },
+];
+
 async function main() {
-  console.log('🌱 Starting database seed with ALL 10 Leave Type Balances for all users...');
+  console.log('🌱 Starting database seed with Gender-Based Leave Balances...');
 
   // Clean existing data
   await prisma.notification.deleteMany();
@@ -29,94 +33,65 @@ async function main() {
   const commonPassword = await bcrypt.hash('Employee@123', 10);
   const adminPassword = await bcrypt.hash('Admin@123', 10);
 
-  // 1. Create Primary Admin (Yasheswini Mallela)
+  // 1. Create Primary Admin (Yasheswini Mallela - Female)
   const admin = await prisma.user.create({
     data: {
       name: 'Yasheswini Mallela',
       email: 'yasheswinireddy18@gmail.com',
       password: adminPassword,
       role: 'ADMIN',
+      gender: 'FEMALE',
       department: 'Management',
       leaveBalances: {
-        create: DEFAULT_LEAVE_BALANCES,
+        create: FEMALE_LEAVE_BALANCES,
       },
     },
   });
 
-  // 2. Create Employee 1 - John Doe
+  // 2. Create Employee 1 - John Doe (Male)
   const john = await prisma.user.create({
     data: {
       name: 'John Doe',
       email: 'john.doe@company.com',
       password: commonPassword,
       role: 'EMPLOYEE',
+      gender: 'MALE',
       department: 'Software Engineering',
       managerId: admin.id,
       leaveBalances: {
-        create: [
-          { leaveType: 'CASUAL', allocated: 12, used: 2 },
-          { leaveType: 'SICK', allocated: 10, used: 1 },
-          { leaveType: 'EARNED', allocated: 15, used: 0 },
-          { leaveType: 'PARENTAL', allocated: 90, used: 0 },
-          { leaveType: 'SECONDARY_PARENTAL', allocated: 14, used: 0 },
-          { leaveType: 'SPECIAL_MEDICAL', allocated: 30, used: 0 },
-          { leaveType: 'MENSTRUAL', allocated: 12, used: 0 },
-          { leaveType: 'ADOPTION', allocated: 60, used: 0 },
-          { leaveType: 'CHARITABLE', allocated: 5, used: 0 },
-          { leaveType: 'UNPAID', allocated: 0, used: 0 },
-        ],
+        create: MALE_LEAVE_BALANCES,
       },
     },
   });
 
-  // 3. Create Employee 2 - Sarah Smith
+  // 3. Create Employee 2 - Sarah Smith (Female)
   const sarah = await prisma.user.create({
     data: {
       name: 'Sarah Smith',
       email: 'sarah.smith@company.com',
       password: commonPassword,
       role: 'EMPLOYEE',
+      gender: 'FEMALE',
       department: 'UI/UX Design',
       managerId: admin.id,
       leaveBalances: {
-        create: [
-          { leaveType: 'CASUAL', allocated: 12, used: 0 },
-          { leaveType: 'SICK', allocated: 10, used: 3 },
-          { leaveType: 'EARNED', allocated: 15, used: 5 },
-          { leaveType: 'PARENTAL', allocated: 90, used: 0 },
-          { leaveType: 'SECONDARY_PARENTAL', allocated: 14, used: 0 },
-          { leaveType: 'SPECIAL_MEDICAL', allocated: 30, used: 0 },
-          { leaveType: 'MENSTRUAL', allocated: 12, used: 1 },
-          { leaveType: 'ADOPTION', allocated: 60, used: 0 },
-          { leaveType: 'CHARITABLE', allocated: 5, used: 0 },
-          { leaveType: 'UNPAID', allocated: 0, used: 0 },
-        ],
+        create: FEMALE_LEAVE_BALANCES,
       },
     },
   });
 
-  // 4. Create Employee 3 - Alex Jones
+  // 4. Create Employee 3 - Alex Jones (Male)
   const alex = await prisma.user.create({
     data: {
       name: 'Alex Jones',
       email: 'alex.jones@company.com',
       password: commonPassword,
       role: 'EMPLOYEE',
+      gender: 'MALE',
       department: 'Product Marketing',
       managerId: admin.id,
       leaveBalances: {
-        create: [
-          { leaveType: 'CASUAL', allocated: 12, used: 1 },
-          { leaveType: 'SICK', allocated: 10, used: 0 },
-          { leaveType: 'EARNED', allocated: 15, used: 0 },
-          { leaveType: 'PARENTAL', allocated: 90, used: 0 },
-          { leaveType: 'SECONDARY_PARENTAL', allocated: 14, used: 0 },
-          { leaveType: 'SPECIAL_MEDICAL', allocated: 30, used: 0 },
-          { leaveType: 'MENSTRUAL', allocated: 12, used: 0 },
-          { leaveType: 'ADOPTION', allocated: 60, used: 0 },
-          { leaveType: 'CHARITABLE', allocated: 5, used: 1 },
-          { leaveType: 'UNPAID', allocated: 0, used: 2 },
-        ],
+        create: MALE_LEAVE_BALANCES,
       },
     },
   });
@@ -197,11 +172,7 @@ async function main() {
     ],
   });
 
-  console.log('✅ Seed completed successfully with ALL 10 Leave Balances for all users!');
-  console.log(`👤 Admin Created: ${admin.name} (${admin.email})`);
-  console.log(`👤 Employee Created: ${john.name} (${john.email})`);
-  console.log(`👤 Employee Created: ${sarah.name} (${sarah.email})`);
-  console.log(`👤 Employee Created: ${alex.name} (${alex.email})`);
+  console.log('✅ Seed completed successfully! Menstrual Leave allocated specifically for Female employees.');
 }
 
 main()
