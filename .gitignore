@@ -29,10 +29,11 @@ yarn-error.log*
 *.zip
 .DS_Store
 
-# Temporary scratch test files
+# Temporary scratch test files & demo scripts
 /scratch/
 /test-s3.mjs
 /test-cloudwatch.mjs
 /create-sns-ses.mjs
 /create-cloudwatch.mjs
 /create-more-aws.mjs
+/DEMO_PRESENTATION_SCRIPT.md

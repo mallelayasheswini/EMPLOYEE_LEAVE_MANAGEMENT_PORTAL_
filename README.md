@@ -25,20 +25,6 @@ npm run dev
 
 ---
 
-## 🔑 Pre-Configured Credentials
-
-### 👑 Primary Administrator
-- **Email**: `yasheswinireddy18@gmail.com`
-- **Password**: `Admin@123`
-- **Role**: `ADMIN` *(Full admin access, approval workflows, workforce analytics, AWS S3 backups)*
-
-### 👥 Demo Employee Accounts
-- **John Doe**: `john.doe@company.com` / `Employee@123`
-- **Sarah Smith**: `sarah.smith@company.com` / `Employee@123`
-- **Alex Jones**: `alex.jones@company.com` / `Employee@123`
-
----
-
 ## 📊 All 10 Supported Leave Categories
 
 1. 🏖️ **Flexible Vacation - India** (Casual Leave - 12 Days/Year)
@@ -57,7 +43,7 @@ npm run dev
 ## ☁️ Live Cloud & AWS Infrastructure
 
 - **Database**: MongoDB Atlas (`cluster0.cpxptag.mongodb.net`)
-- **Email Dispatcher**: Google Cloud & AWS SES SMTP (`yasheswinireddy18@gmail.com`)
+- **Email Dispatcher**: Google Cloud & AWS SES SMTP
 - **AWS S3 Bucket**: `yasheswini-leave-portal-1786762161` (`us-west-1`)
 - **AWS CloudWatch Logs**: `/aws/leave-management-portal/logs`
 - **AWS SNS Topic**: `arn:aws:sns:us-west-1:713881814960:leave-portal-notifications`
@@ -82,6 +68,5 @@ npm run dev
 │   ├── schema.prisma      # Prisma Data Schema for MongoDB Atlas
 │   └── seed.ts            # Seeding Engine for 10 Leave Balances & Initial Accounts
 ├── run-app.bat            # 1-Click Windows Startup Script
-├── Dockerfile             # AWS App Runner / EC2 Container Manifest
-└── AWS-DEPLOYMENT-GUIDE.md # AWS Amplify & AWS EC2 Step-by-Step Guide
+└── Dockerfile             # AWS App Runner / EC2 Container Manifest
 ```
