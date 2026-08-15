@@ -20,7 +20,6 @@ import {
   X,
   Cloud,
   Database,
-  Download,
   UploadCloud,
   ExternalLink,
 } from 'lucide-react';
@@ -202,68 +201,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* LIVE AWS CLOUD INTEGRATION PANEL */}
-        <div className="glass-panel p-6 rounded-3xl border border-indigo-500/30 bg-indigo-950/20 space-y-4 shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400">
-                <Cloud className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-extrabold text-white flex items-center space-x-2">
-                  <span>AWS Cloud Infrastructure Status</span>
-                  <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">
-                    LIVE CONNECTED
-                  </span>
-                </h3>
-                <p className="text-xs text-indigo-200/80 mt-0.5">
-                  AWS Region: <strong className="text-white">us-east-1</strong> | S3 Bucket:{' '}
-                  <strong className="text-indigo-300">yasheswini-leave-portal-1786762161</strong>
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={handleTriggerAwsBackup}
-              disabled={backingUp}
-              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50"
-            >
-              <UploadCloud className="w-4 h-4" />
-              <span>{backingUp ? 'Backing up to AWS S3...' : 'Backup Database to AWS S3'}</span>
-            </button>
-          </div>
-
-          {/* AWS S3 Backups List */}
-          {awsBackups.length > 0 && (
-            <div className="pt-3 border-t border-indigo-500/20 space-y-2">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center space-x-1.5">
-                <Database className="w-3.5 h-3.5" />
-                <span>Live AWS S3 Database Backups ({awsBackups.length})</span>
-              </h4>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                {awsBackups.slice(0, 4).map((b) => (
-                  <a
-                    key={b.key}
-                    href={b.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 flex items-center justify-between transition-all group"
-                  >
-                    <div className="truncate pr-2">
-                      <p className="font-semibold text-slate-200 truncate">{b.key}</p>
-                      <p className="text-[10px] text-slate-400">
-                        {formatDate(b.lastModified)} • {(b.size / 1024).toFixed(1)} KB
-                      </p>
-                    </div>
-                    <ExternalLink className="w-3.5 h-3.5 text-indigo-400 group-hover:text-white shrink-0" />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Executive KPI Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="glass-card p-5 rounded-2xl border-l-4 border-brand-500 space-y-1">
@@ -435,6 +372,68 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* LIVE AWS CLOUD INTEGRATION PANEL */}
+        <div className="glass-panel p-6 rounded-3xl border border-indigo-500/30 bg-indigo-950/20 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-400">
+                <Cloud className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-extrabold text-white flex items-center space-x-2">
+                  <span>AWS Cloud Infrastructure Status</span>
+                  <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">
+                    LIVE CONNECTED
+                  </span>
+                </h3>
+                <p className="text-xs text-indigo-200/80 mt-0.5">
+                  AWS Region: <strong className="text-white">us-east-1</strong> | S3 Bucket:{' '}
+                  <strong className="text-indigo-300">yasheswini-leave-portal-1786762161</strong>
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleTriggerAwsBackup}
+              disabled={backingUp}
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50"
+            >
+              <UploadCloud className="w-4 h-4" />
+              <span>{backingUp ? 'Backing up to AWS S3...' : 'Backup Database to AWS S3'}</span>
+            </button>
+          </div>
+
+          {/* AWS S3 Backups List */}
+          {awsBackups.length > 0 && (
+            <div className="pt-3 border-t border-indigo-500/20 space-y-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-300 flex items-center space-x-1.5">
+                <Database className="w-3.5 h-3.5" />
+                <span>Live AWS S3 Database Backups ({awsBackups.length})</span>
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {awsBackups.slice(0, 4).map((b) => (
+                  <a
+                    key={b.key}
+                    href={b.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 flex items-center justify-between transition-all group"
+                  >
+                    <div className="truncate pr-2">
+                      <p className="font-semibold text-slate-200 truncate">{b.key}</p>
+                      <p className="text-[10px] text-slate-400">
+                        {formatDate(b.lastModified)} • {(b.size / 1024).toFixed(1)} KB
+                      </p>
+                    </div>
+                    <ExternalLink className="w-3.5 h-3.5 text-indigo-400 group-hover:text-white shrink-0" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
 
