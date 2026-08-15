@@ -18,6 +18,7 @@ import {
   UploadCloud,
   FileCheck,
   Gift,
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -33,13 +34,13 @@ interface AbsenceRecord {
   isCurrentUser: boolean;
 }
 
-// Statutory Public Holidays Registry
+// Statutory Public Holidays Registry (Key: YYYY-MM-DD)
 const PUBLIC_HOLIDAYS: Record<string, string> = {
-  '2026-01-01': "New Year's Day",
+  '2026-01-01': "New Year's Day 🎆",
   '2026-01-26': 'Republic Day 🇮🇳',
   '2026-03-25': 'Holi Festival 🎨',
-  '2026-04-14': 'Ambedkar Jayanti',
-  '2026-05-01': 'May Day / Labor Day',
+  '2026-04-14': 'Ambedkar Jayanti 📜',
+  '2026-05-01': 'Labor Day 🛠️',
   '2026-08-15': 'Independence Day 🇮🇳',
   '2026-08-26': 'Janmashtami 🪔',
   '2026-09-05': 'Ganesh Chaturthi 🌸',
@@ -241,7 +242,10 @@ export default function ApplyLeavePage() {
             }
 
             const currentDayObj = new Date(year, month, dayNum);
-            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+            const formattedMonth = String(month + 1).padStart(2, '0');
+            const formattedDay = String(dayNum).padStart(2, '0');
+            const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+
             const dayOfWeek = currentDayObj.getDay();
             const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
             const holidayName = PUBLIC_HOLIDAYS[dateStr];
@@ -274,7 +278,7 @@ export default function ApplyLeavePage() {
                 new Date(dateStr) <= new Date(l.endDate)
             );
 
-            let dayClasses = 'h-9 rounded-lg flex items-center justify-center font-medium cursor-pointer transition-all border text-slate-200 relative ';
+            let dayClasses = 'h-10 rounded-xl flex flex-col items-center justify-center font-medium cursor-pointer transition-all border text-slate-200 relative ';
 
             if (isStart || isEnd) {
               dayClasses += 'bg-cyan-500 text-slate-950 border-cyan-300 font-extrabold shadow-md shadow-cyan-500/40 ';
@@ -285,14 +289,14 @@ export default function ApplyLeavePage() {
             } else if (pendingLeave) {
               dayClasses += 'bg-amber-600/30 border-amber-500/50 text-amber-200 font-bold ';
             } else if (holidayName) {
-              dayClasses += 'bg-rose-950/80 border-rose-500/70 text-rose-300 font-extrabold shadow-sm shadow-rose-500/20 ';
+              dayClasses += 'bg-rose-600 text-white border-rose-400 font-extrabold shadow-lg shadow-rose-600/30 ring-2 ring-rose-500/40 ';
             } else if (isWeekend) {
               dayClasses += 'bg-slate-900/60 border-slate-800 text-slate-500 ';
             } else {
               dayClasses += 'bg-slate-900/40 border-slate-800/60 hover:bg-slate-800 hover:border-slate-700 text-slate-300 ';
             }
 
-            if (isToday && !isStart && !isEnd) {
+            if (isToday && !isStart && !isEnd && !holidayName) {
               dayClasses += 'ring-2 ring-purple-500 ring-offset-1 ring-offset-slate-950 ';
             }
 
@@ -303,12 +307,10 @@ export default function ApplyLeavePage() {
                 title={holidayName ? `Public Holiday: ${holidayName}` : undefined}
                 className={dayClasses}
               >
-                <span>{dayNum}</span>
-
-                {/* Holiday Badge Indicator */}
+                <span className="leading-none">{dayNum}</span>
                 {holidayName && !isStart && !isEnd && (
-                  <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                  <span className="text-[8px] font-extrabold leading-none mt-0.5 text-rose-100 uppercase tracking-tighter truncate max-w-full px-0.5">
+                    Holiday
                   </span>
                 )}
 
@@ -473,8 +475,9 @@ export default function ApplyLeavePage() {
                 <ChevronLeft className="w-5 h-5" />
               </button>
 
-              <div className="text-sm font-semibold text-slate-300">
-                Interactive Start & End Date Selection
+              <div className="text-sm font-semibold text-slate-300 flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-rose-400" />
+                <span>Interactive Calendar & Public Holidays</span>
               </div>
 
               <button
@@ -511,8 +514,8 @@ export default function ApplyLeavePage() {
                   <span>Pending Leave</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="w-3.5 h-3.5 rounded bg-rose-950/80 border border-rose-500 inline-block" />
-                  <span>Public Holiday</span>
+                  <span className="w-3.5 h-3.5 rounded bg-rose-600 border border-rose-400 inline-block shadow-sm shadow-rose-500" />
+                  <span className="font-bold text-rose-300">Public Holiday 🇮🇳</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span className="w-3.5 h-3.5 rounded bg-slate-900 border border-slate-800 inline-block" />
@@ -521,29 +524,29 @@ export default function ApplyLeavePage() {
               </div>
 
               {/* Public Holidays Listing */}
-              <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 space-y-2">
+              <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-2">
                 <div className="flex items-center space-x-2 text-xs font-bold text-rose-300">
                   <Gift className="w-4 h-4 text-rose-400" />
-                  <span>Upcoming Official Public Holidays</span>
+                  <span>Official Statutory Public Holidays</span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-300">
-                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span>Aug 15: Independence Day 🇮🇳</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-200">
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-rose-500/30">
+                    <span className="font-bold text-rose-300">Aug 15, 2026: Independence Day 🇮🇳</span>
                   </div>
-                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span>Aug 26: Janmashtami 🪔</span>
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-rose-500/30">
+                    <span className="font-bold text-rose-300">Aug 26, 2026: Janmashtami 🪔</span>
                   </div>
-                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span>Sep 05: Ganesh Chaturthi 🌸</span>
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-rose-500/30">
+                    <span className="font-bold text-rose-300">Sep 05, 2026: Ganesh Chaturthi 🌸</span>
                   </div>
-                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span>Oct 02: Gandhi Jayanti 🇮🇳</span>
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-rose-500/30">
+                    <span className="font-bold text-rose-300">Oct 02, 2026: Gandhi Jayanti 🇮🇳</span>
                   </div>
-                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span>Oct 20: Dussehra ✨</span>
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-rose-500/30">
+                    <span className="font-bold text-rose-300">Oct 20, 2026: Dussehra ✨</span>
                   </div>
-                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span>Nov 08: Diwali 🪔</span>
+                  <div className="flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-rose-500/30">
+                    <span className="font-bold text-rose-300">Nov 08, 2026: Diwali 🪔</span>
                   </div>
                 </div>
               </div>
